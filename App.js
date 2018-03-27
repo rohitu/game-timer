@@ -1,24 +1,26 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import PlayerModel from './models/player.model';
-import Player from './components/player.component';
+import Players from './components/players.component';
 
 export default class App extends React.Component {
   render() {
-    let playerOne = new PlayerModel(1, 'time');
+    const defaultNumberOfPlayers = 4;
+
+    // TODO add header for menu system
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Open up App.js to start working on your app!</Text>
-        <Text style={styles.text}>Changes you make will automatically reload.</Text>
-        <Text style={styles.text}>Shake your phone to open the developer menu.</Text>
-        <Player player={playerOne}></Player>
+        <Text>Beginning</Text>
+        <Players numberOfPlayers={defaultNumberOfPlayers}></Players>
+        <Text>End</Text>
       </View>
     );
   }
 }
 
-const isLight = false;
+// Ok yeah this is a very small start to theming.  Do it better.
+// Or do I really need this here?
+const isLight = true;
 const bgColor = isLight ? '#fff' : '#000';
 const fontColor = isLight ? '#000' : '#fff';
 const styles = StyleSheet.create({
