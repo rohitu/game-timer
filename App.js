@@ -15,11 +15,13 @@ export default class App extends React.Component {
   }
 }
 
+const lightColorTheme = '#fff';
+const darkColorTheme = '#000';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: darkColorTheme,
+    alignItems: 'stretch',
+    //justifyContent: 'center',
   },
 });
