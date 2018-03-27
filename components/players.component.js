@@ -64,6 +64,7 @@ export default class PlayersComponent extends React.Component {
 }
 
 // TODO the styles, e.g. font sizes, may need to scale with number of players
+// It seems to work fine for up to 10 players, but need to re-test once I have timer numbers
 const styles = StyleSheet.create({
   activeButton: {
     flex: 3
