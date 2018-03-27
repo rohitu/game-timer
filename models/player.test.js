@@ -1,4 +1,4 @@
-import Player from './player';
+import Player from './player.model';
 
 it('player constructed properly', () => {
   let playerOne = new Player(1, 'mytime');
