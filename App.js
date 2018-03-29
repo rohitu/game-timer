@@ -6,12 +6,20 @@ import Players from './components/players.component';
 export default class App extends React.Component {
   render() {
     const defaultNumberOfPlayers = 4;
+    //const defaultDuration = 30*60*1000; // 30 minutes
+    const defaultDuration = 6*1000; // testing
 
     // TODO add header for menu system
+    // Using a skipAutostart flag so that unit tests don't try to start timers.
+    // And maybe it'll come in handy as an option in the future.
     return (
       <View style={styles.container}>
         <Text>Beginning</Text>
-        <Players numberOfPlayers={defaultNumberOfPlayers}></Players>
+        <Players
+          numberOfPlayers={defaultNumberOfPlayers}
+          duration={defaultDuration}
+          skipAutostart={this.props.skipAutostart}
+        />
         <Text>End</Text>
       </View>
     );

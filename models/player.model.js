@@ -1,10 +1,13 @@
 export default class Player  {
-  // TODO: currentTime shouldn't be a string - need to find some Timer class
-  constructor(number, currentTime) {
+  constructor(number, timeDurationMs) {
     this.number = number;
     this.defaultName = `Player ${number}`;
     this.name = this.defaultName;
-    this.currentTime = currentTime;
+
+    // TODO I'm kinda inspired by this to write my own timer with react-easy-newState
+    // https://www.reddit.com/r/reactjs/comments/7w56q6/a_tiny_stopwatch_with_react_easy_state/
+    // https://hackernoon.com/introducing-react-easy-state-1210a156fa16
+    this.timeDurationMs = timeDurationMs;
   }
 
   setName(name) {

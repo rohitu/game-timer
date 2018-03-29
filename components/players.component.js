@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, AppRegistry, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Timer } from 'react-native-stopwatch-timer';
 
 import PlayerModel from '../models/player.model';
 
@@ -10,64 +11,100 @@ export default class PlayersComponent extends React.Component {
 
     this.players = [];
     for (let i = 1; i <= this.props.numberOfPlayers; i++) {
-      this.players.push(new PlayerModel(i, `time${i}`));
+      this.players.push(new PlayerModel(i, this.props.duration));
     }
 
     // Initialize to the first player being active. This will change as
     // the user clicks on the app.
+    // If any timer completes, store that information so that other timers aren't active anymore
+    this.nextPlayerIndex = 0;
     this.state = {
-      activePlayerIndex: 0
+      activePlayer: this.players[this.nextPlayerIndex],
+      hasAnyTimerCompleted: false
     };
   }
 
   render() {
     return (
       <View style={{flex:1}}>
-      {this.players.map(this.renderPlayer)}
+        {this.players.map(this.renderPlayer)}
       </View>
     );
   }
 
   renderPlayer = (currentPlayer, index) => {
     let currentStyle = [styles.inactiveButton];
-    let currentTextStyle = [styles.inactiveButtonText];
-    if (this.state.activePlayerIndex === index) {
+    let currentTextStyle = [styles.inactiveText];
+    let isCurrentPlayerActive = this.state.activePlayer === currentPlayer;
+    if (isCurrentPlayerActive) {
       currentStyle.push(styles.activeButton);
-      currentTextStyle.push(styles.activeButtonText);
+      currentTextStyle.push(styles.activeText);
     }
 
+    let shouldAutostartTimer = !this.state.hasAnyTimerCompleted && isCurrentPlayerActive && !this.props.skipAutostart;
+    let timerOptions = {
+      text: isCurrentPlayerActive ? activeText : inactiveText
+    };
+
     return (
-      <View key={index} style={currentStyle}>
-        <TouchableOpacity
-          onPress={() => this.playerSelected(this.players, currentPlayer)}
-          style={styles.buttonTouchableContainer}
-        >
-          <View style={styles.buttonTextContainer}>
+      <TouchableOpacity
+        activeOpacity={.3}
+        key={index}
+        style={currentStyle}
+        onPress={this.playerSelected}
+        disabled={this.state.hasAnyTimerCompleted}
+      >
+        <View style={isCurrentPlayerActive ? {} : styles.buttonTextContainer}>
           <Text style={currentTextStyle}>{currentPlayer.name}</Text>
-          <Text style={currentTextStyle}>{currentPlayer.currentTime}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+          <Timer
+            totalDuration={currentPlayer.timeDurationMs}
+            start={shouldAutostartTimer}
+            handleFinish={this.playerTimerComplete}
+            options={timerOptions}
+          />
+        </View>
+      </TouchableOpacity>
     );
   };
 
   // Note: Defined as an anonymous function to maintain the 'this' object
-  playerSelected(allPlayers, currentPlayer) {
+  playerSelected = () => {
+    if (this.state.hasAnyTimerCompleted) return;
+
     //Alert.alert(`You selected: ${currentPlayer.name}, isActive: ${currentPlayer.isActive}`);
+    this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
     this.setState(prevState => {
       let newState = {
-        activePlayerIndex: (prevState.activePlayerIndex + 1) % this.players.length
+        activePlayer: this.players[this.nextPlayerIndex]
       };
       return newState;
-    })
-  }
+    });
+  };
+
+  playerTimerComplete = () => {
+    this.setState({hasAnyTimerCompleted: true});
+    Alert.alert(`"${this.state.activePlayer.name}" is out of time!`);
+  };
 }
 
 // TODO the styles, e.g. font sizes, may need to scale with number of players
 // It seems to work fine for up to 10 players, but need to re-test once I have timer numbers
+
+// Specify active and inactive text options outside of styles so it can
+// be used for both styles as well as Timer options without duplication.
+const activeText = {
+  fontSize: 65,
+  textAlign: 'center'
+};
+const inactiveText = {
+  fontSize: 27,
+  textAlign: 'center'
+};
+
 const styles = StyleSheet.create({
   activeButton: {
-    flex: 3
+    flex: 3,
+    alignItems: 'center'
   },
   inactiveButton: {
     flex: 1,
@@ -77,21 +114,13 @@ const styles = StyleSheet.create({
     borderWidth: .5,
     borderColor: 'black'
   },
-  activeButtonText: {
-    fontSize: 60
-  },
-  inactiveButtonText: {
-    fontSize: 25
-  },
-  buttonTouchableContainer: {
-    flex: 1,
-    justifyContent: 'center'
-  },
   buttonTextContainer: {
     justifyContent:'space-between',
     flexDirection:'row',
-    marginHorizontal: 10
-  }
+    marginHorizontal: 30
+  },
+  activeText,
+  inactiveText,
 });
 
 // Not sure if I need this
