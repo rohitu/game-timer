@@ -4,7 +4,15 @@ import { Timer } from 'react-native-stopwatch-timer';
 
 import PlayerModel from '../models/player.model';
 
-// TODO unit test?
+/*
+  Custom props for this component:
+  - numberOfPlayers: number [Required] Defines the number of players to display
+  - duration: number [Required] timer duration, in milliseconds, for each of the players
+  - isPaused: boolean [Optional] whether the timers in the component should be paused
+  - disabled: boolean [Optional] whether the entire component is disabled
+  - resetTimer: boolean [Optional] whether the timer should be reset for each player
+  - onTimerComplete: Callback function [Optional] called when any of the players' timers are completed
+*/
 export default class PlayersComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -19,8 +27,7 @@ export default class PlayersComponent extends React.Component {
     // If any timer completes, store that information so that other timers aren't active anymore
     this.nextPlayerIndex = 0;
     this.state = {
-      activePlayer: this.players[this.nextPlayerIndex],
-      hasAnyTimerCompleted: false
+      activePlayer: this.players[this.nextPlayerIndex]
     };
   }
 
@@ -41,8 +48,8 @@ export default class PlayersComponent extends React.Component {
       currentTextStyle.push(styles.activeText);
     }
 
-    let shouldAutostartTimer = !this.state.hasAnyTimerCompleted && isCurrentPlayerActive && !this.props.skipAutostart;
-    let timerOptions = {
+    let shouldAutostartTimer = isCurrentPlayerActive && !this.props.disabled && !this.props.isPaused;
+    let timerStyleOptions = {
       text: isCurrentPlayerActive ? activeText : inactiveText
     };
 
@@ -52,15 +59,16 @@ export default class PlayersComponent extends React.Component {
         key={index}
         style={currentStyle}
         onPress={this.playerSelected}
-        disabled={this.state.hasAnyTimerCompleted}
+        disabled={this.props.disabled}
       >
         <View style={isCurrentPlayerActive ? {} : styles.buttonTextContainer}>
           <Text style={currentTextStyle}>{currentPlayer.name}</Text>
           <Timer
             totalDuration={currentPlayer.timeDurationMs}
             start={shouldAutostartTimer}
+            reset={this.props.resetTimer}
             handleFinish={this.playerTimerComplete}
-            options={timerOptions}
+            options={timerStyleOptions}
           />
         </View>
       </TouchableOpacity>
@@ -69,21 +77,18 @@ export default class PlayersComponent extends React.Component {
 
   // Note: Defined as an anonymous function to maintain the 'this' object
   playerSelected = () => {
-    if (this.state.hasAnyTimerCompleted) return;
+    if (this.props.disabled) return;
 
     //Alert.alert(`You selected: ${currentPlayer.name}, isActive: ${currentPlayer.isActive}`);
     this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
-    this.setState(prevState => {
-      let newState = {
-        activePlayer: this.players[this.nextPlayerIndex]
-      };
-      return newState;
+    this.setState({
+      activePlayer: this.players[this.nextPlayerIndex]
     });
   };
 
   playerTimerComplete = () => {
-    this.setState({hasAnyTimerCompleted: true});
     Alert.alert(`"${this.state.activePlayer.name}" is out of time!`);
+    this.props.onTimerComplete();
   };
 }
 
