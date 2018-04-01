@@ -25,6 +25,9 @@ export default class GameTimer extends React.Component {
       isTimerCompleted: false,
       resetTimer: false
     };
+
+    this.numberOfPlayers = defaultNumberOfPlayers;
+    this.duration = defaultDuration;
   }
 
   render() {
@@ -32,13 +35,19 @@ export default class GameTimer extends React.Component {
     let startPauseIconName = this.state.isPaused ? "play" : "pause";
     let startPauseIconText = this.state.isPaused ? "Start" : "Pause";
 
+    // Get defaults or access latest info from navigation state params
+    // The navigation state params is where the Settings tab will relay info
+    // back to this view.
+    this.numberOfPlayers = parseInt(this.props.navigation.getParam('numberOfPlayers', defaultNumberOfPlayers));
+    this.duration = parseInt(this.props.navigation.getParam('duration', defaultDuration));
+
     // TODO it would be nice if the middle Play/Pause button was larger.
     // Maybe a circular button that's larger than the other two so it looks nice?
     return (
       <View style={styles.container}>
         <Players
-          numberOfPlayers={defaultNumberOfPlayers}
-          duration={defaultDuration}
+          numberOfPlayers={this.numberOfPlayers}
+          duration={this.duration}
           isPaused={this.state.isPaused}
           disabled={this.state.isTimerCompleted}
           onTimerComplete={this.timerCompleted}
@@ -75,7 +84,10 @@ export default class GameTimer extends React.Component {
     });
 
     //Alert.alert('Settings pressed!');
-    this.props.navigation.navigate('Settings', {foo: 'hello world navigation'});
+    this.props.navigation.replace('Settings', {
+      'numberOfPlayers': this.numberOfPlayers.toString(),
+      'duration': this.duration.toString()
+    });
   };
 
   pausePressed = () => {

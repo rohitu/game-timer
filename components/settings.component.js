@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, AppRegistry, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
 /*
@@ -13,17 +13,40 @@ export default class Settings extends React.Component {
     title: 'Settings'
   };
 
+  constructor(props) {
+    super(props);
+
+    // TODO figure out a way to not duplicate default values
+    this.state = {
+      numberOfPlayers: '4',
+      duration: '6000'
+    };
+  }
+
   render() {
     return (
       <View>
-        <Text>{`This is the Settings menu, foo:${this.props.navigation.state.params.foo}`}</Text>
+        <TextInput
+          keyboardType="numeric"
+          onChangeText={(text) => this.setState({numberOfPlayers: text})}
+          value={this.state.numberOfPlayers}
+        />
+        <TextInput
+          keyboardType="numeric"
+          onChangeText={(text) => this.setState({duration: text})}
+          value={this.state.duration}
+        />
         <Button title="press me" onPress={this.navigateToGameTimer} />
       </View>
     );
   }
 
   navigateToGameTimer = () => {
-    this.props.navigation.goBack();
+    this.props.navigation.replace('GameTimer', {
+      'numberOfPlayers': this.state.numberOfPlayers,
+      'duration': this.state.duration
+    });
+    //this.props.navigation.pop();
   };
 }
 
