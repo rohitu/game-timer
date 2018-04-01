@@ -1,17 +1,21 @@
 import React from 'react';
-import { StackNavigator } from 'react-navigation';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import GameTimer from './components/gametimer.component';
-import Settings from './components/settings.component';
+import Players from './players.component';
+import MenuBar from './menubar.component';
+import MenuButton from './menubutton.component';
 
-const App = StackNavigator({
-  GameTimer: { screen: GameTimer },
-  Settings: { screen: Settings }
-});
+/*
+  Custom props for this component:
+  - navigation: Inherited from the StackNavigator library. See https://reactnavigation.org/docs/getting-started.html
+*/
+export default class GameTimer extends React.Component {
 
-export default App;
+  // The StackNavigator expects this to be defined for settings options for navigation events.
+  static navigationOptions = {
+    header: null // Hide navigation header when this component is active.
+  };
 
-/*export default class App extends React.Component {
   constructor(props) {
     super(props);
 
@@ -28,6 +32,8 @@ export default App;
     let startPauseIconName = this.state.isPaused ? "play" : "pause";
     let startPauseIconText = this.state.isPaused ? "Start" : "Pause";
 
+    // TODO it would be nice if the middle Play/Pause button was larger.
+    // Maybe a circular button that's larger than the other two so it looks nice?
     return (
       <View style={styles.container}>
         <Players
@@ -40,9 +46,9 @@ export default App;
         />
         <MenuBar>
           <MenuButton
-            onPress={this.menuPressed}
+            onPress={this.settingsPressed}
             iconName={"gear"}
-            buttonText={"Menu"}
+            buttonText={"Settings"}
           />
           <MenuButton
              onPress={this.pausePressed}
@@ -60,15 +66,16 @@ export default App;
     );
   }
 
-  menuPressed = () => {
-    // If menu is pressed, then pause the timers.
+  settingsPressed = () => {
+    // If settings button is pressed, then pause the timers.
     // Also need to set resetTimer to false so that once Reset is clicked, the state isn't always going to reset timers.
     this.setState({
       isPaused: true,
       resetTimer: false
     });
 
-    Alert.alert('Menu pressed!');
+    //Alert.alert('Settings pressed!');
+    this.props.navigation.navigate('Settings', {foo: 'hello world navigation'});
   };
 
   pausePressed = () => {
@@ -121,4 +128,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   }
 });
-*/
+
+// Not sure if I need this
+//AppRegistry.registerComponent('GameTimer', () => GameTimer);

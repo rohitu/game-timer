@@ -129,4 +129,4 @@ const styles = StyleSheet.create({
 });
 
 // Not sure if I need this
-//AppRegistry.registerComponent('Player', () => PlayerComponent);
+//AppRegistry.registerComponent('Players', () => PlayersComponent);
