@@ -16,16 +16,17 @@ export default class Settings extends React.Component {
   constructor(props) {
     super(props);
 
-    // TODO figure out a way to not duplicate default values
     this.state = {
-      numberOfPlayers: '4',
-      duration: '6000'
+      numberOfPlayers: this.props.numberOfPlayers.toString(),
+      duration: this.props.duration.toString()
     };
   }
 
+  // TODO remove spacing at the top and get a good navbar going
   render() {
     return (
       <View>
+        <View style={{height:30}}></View>
         <TextInput
           keyboardType="numeric"
           onChangeText={(text) => this.setState({numberOfPlayers: text})}
@@ -42,10 +43,11 @@ export default class Settings extends React.Component {
   }
 
   navigateToGameTimer = () => {
-    this.props.navigation.replace('GameTimer', {
+    this.props.hideCallback(parseInt(this.state.numberOfPlayers), parseInt(this.state.duration))
+    /*this.props.navigation.replace('GameTimer', {
       'numberOfPlayers': this.state.numberOfPlayers,
       'duration': this.state.duration
-    });
+    });*/
     //this.props.navigation.pop();
   };
 }

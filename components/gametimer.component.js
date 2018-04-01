@@ -25,10 +25,7 @@ export default class GameTimer extends React.Component {
       isTimerCompleted: false,
       resetTimer: false
     };
-
-    this.numberOfPlayers = defaultNumberOfPlayers;
-    this.duration = defaultDuration;
-  }
+}
 
   render() {
     // If the app is paused, then show text to trigger Play (and vice-versa)
@@ -38,16 +35,16 @@ export default class GameTimer extends React.Component {
     // Get defaults or access latest info from navigation state params
     // The navigation state params is where the Settings tab will relay info
     // back to this view.
-    this.numberOfPlayers = parseInt(this.props.navigation.getParam('numberOfPlayers', defaultNumberOfPlayers));
-    this.duration = parseInt(this.props.navigation.getParam('duration', defaultDuration));
+    //this.numberOfPlayers = parseInt(this.props.navigation.getParam('numberOfPlayers', defaultNumberOfPlayers));
+    //this.duration = parseInt(this.props.navigation.getParam('duration', defaultDuration));
 
     // TODO it would be nice if the middle Play/Pause button was larger.
     // Maybe a circular button that's larger than the other two so it looks nice?
     return (
       <View style={styles.container}>
         <Players
-          numberOfPlayers={this.numberOfPlayers}
-          duration={this.duration}
+          numberOfPlayers={this.props.numberOfPlayers}
+          duration={this.props.duration}
           isPaused={this.state.isPaused}
           disabled={this.state.isTimerCompleted}
           onTimerComplete={this.timerCompleted}
@@ -78,16 +75,18 @@ export default class GameTimer extends React.Component {
   settingsPressed = () => {
     // If settings button is pressed, then pause the timers.
     // Also need to set resetTimer to false so that once Reset is clicked, the state isn't always going to reset timers.
+    // TODO bug: need to fix this button click when timers are running
     this.setState({
       isPaused: true,
       resetTimer: false
     });
 
     //Alert.alert('Settings pressed!');
-    this.props.navigation.replace('Settings', {
+    /*this.props.navigation.replace('Settings', {
       'numberOfPlayers': this.numberOfPlayers.toString(),
       'duration': this.duration.toString()
-    });
+    });*/
+    this.props.hideCallback();
   };
 
   pausePressed = () => {
