@@ -53,6 +53,7 @@ export default class GameTimer extends React.Component {
         <MenuBar>
           <MenuButton
             onPress={this.settingsPressed}
+            disabled={!this.state.isPaused}
             iconName={"gear"}
             buttonText={"Settings"}
           />
@@ -75,11 +76,11 @@ export default class GameTimer extends React.Component {
   settingsPressed = () => {
     // If settings button is pressed, then pause the timers.
     // Also need to set resetTimer to false so that once Reset is clicked, the state isn't always going to reset timers.
-    // TODO bug: need to fix this button click when timers are running
-    this.setState({
+    
+    /*this.setState({
       isPaused: true,
       resetTimer: false
-    });
+    });*/
 
     //Alert.alert('Settings pressed!');
     /*this.props.navigation.replace('Settings', {
