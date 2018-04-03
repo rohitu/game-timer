@@ -12,9 +12,9 @@ import MenuButton from './menubutton.component';
 export default class GameTimer extends React.Component {
 
   // The StackNavigator expects this to be defined for settings options for navigation events.
-  static navigationOptions = {
+  /*static navigationOptions = {
     header: null // Hide navigation header when this component is active.
-  };
+  };*/
 
   constructor(props) {
     super(props);
@@ -76,7 +76,7 @@ export default class GameTimer extends React.Component {
   settingsPressed = () => {
     // If settings button is pressed, then pause the timers.
     // Also need to set resetTimer to false so that once Reset is clicked, the state isn't always going to reset timers.
-    
+
     /*this.setState({
       isPaused: true,
       resetTimer: false
@@ -87,7 +87,7 @@ export default class GameTimer extends React.Component {
       'numberOfPlayers': this.numberOfPlayers.toString(),
       'duration': this.duration.toString()
     });*/
-    this.props.hideCallback();
+    //this.props.hideCallback();
   };
 
   pausePressed = () => {

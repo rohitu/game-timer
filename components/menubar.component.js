@@ -16,8 +16,8 @@ const menuBarStyles = {
   height: 50,
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'space-between',
-  marginHorizontal: 10
+  justifyContent: 'space-around',
+  //marginHorizontal: 10
 };
 
 // Not sure if I need this

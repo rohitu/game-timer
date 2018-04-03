@@ -9,9 +9,9 @@ import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpaci
 export default class Settings extends React.Component {
 
   // The StackNavigator expects this to be defined for settings options for navigation events.
-  static navigationOptions = {
+  /*static navigationOptions = {
     title: 'Settings'
-  };
+  };*/
 
   constructor(props) {
     super(props);
@@ -43,7 +43,7 @@ export default class Settings extends React.Component {
   }
 
   navigateToGameTimer = () => {
-    this.props.hideCallback(parseInt(this.state.numberOfPlayers), parseInt(this.state.duration))
+    //this.props.hideCallback(parseInt(this.state.numberOfPlayers), parseInt(this.state.duration))
     /*this.props.navigation.replace('GameTimer', {
       'numberOfPlayers': this.state.numberOfPlayers,
       'duration': this.state.duration

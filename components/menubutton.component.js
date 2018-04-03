@@ -40,6 +40,7 @@ const defaultIconSize = 20;
 // TODO the menu buttons aren't properly aligned.  Fix it.
 const styles = StyleSheet.create({
   container: {
+    flex:1,
     alignItems: 'center',
     justifyContent: 'center'
   },
