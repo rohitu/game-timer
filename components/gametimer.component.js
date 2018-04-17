@@ -4,26 +4,31 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Players from './players.component';
 import MenuBar from './menubar.component';
 import MenuButton from './menubutton.component';
+import Settings from './settings.component';
+
+import PlayerModel from '../models/player.model';
 
 /*
   Custom props for this component:
-  - navigation: Inherited from the StackNavigator library. See https://reactnavigation.org/docs/getting-started.html
+  - numberOfPlayers
+  - duration
 */
 export default class GameTimer extends React.Component {
-
-  // The StackNavigator expects this to be defined for settings options for navigation events.
-  /*static navigationOptions = {
-    header: null // Hide navigation header when this component is active.
-  };*/
-
   constructor(props) {
     super(props);
+
+    let players = [];
+    for (let i = 1; i <= this.props.numberOfPlayers; i++) {
+      players.push(new PlayerModel(i, this.props.duration));
+    }
 
     // Start the app paused.
     this.state = {
       isPaused: true,
       isTimerCompleted: false,
-      resetTimer: false
+      resetTimer: false,
+      showTimer: false,
+      players: players
     };
 }
 
@@ -32,19 +37,14 @@ export default class GameTimer extends React.Component {
     let startPauseIconName = this.state.isPaused ? "play" : "pause";
     let startPauseIconText = this.state.isPaused ? "Start" : "Pause";
 
-    // Get defaults or access latest info from navigation state params
-    // The navigation state params is where the Settings tab will relay info
-    // back to this view.
-    //this.numberOfPlayers = parseInt(this.props.navigation.getParam('numberOfPlayers', defaultNumberOfPlayers));
-    //this.duration = parseInt(this.props.navigation.getParam('duration', defaultDuration));
-
     // TODO it would be nice if the middle Play/Pause button was larger.
     // Maybe a circular button that's larger than the other two so it looks nice?
+
     return (
       <View style={styles.container}>
         <Players
-          numberOfPlayers={this.props.numberOfPlayers}
-          duration={this.props.duration}
+          style={this.state.showTimer ? styles.show : styles.hide}
+          players={this.state.players}
           isPaused={this.state.isPaused}
           disabled={this.state.isTimerCompleted}
           onTimerComplete={this.timerCompleted}
@@ -69,26 +69,41 @@ export default class GameTimer extends React.Component {
             buttonText={"Reset"}
           />
         </MenuBar>
+        <Settings
+          style={this.state.showTimer ? styles.hide : styles.show}
+          players={this.state.players}
+          hideCallback={this.closeSettings}
+        />
       </View>
     );
   }
 
   settingsPressed = () => {
-    // If settings button is pressed, then pause the timers.
-    // Also need to set resetTimer to false so that once Reset is clicked, the state isn't always going to reset timers.
+    // Assume that settings cannot be pressed while timers are running.
+    // If I can fix the bug that comes up with that, then I can also
+    // set the isPaused state to true so that if settings button is
+    // pressed, then timers are automatically paused.
 
-    /*this.setState({
-      isPaused: true,
-      resetTimer: false
-    });*/
-
-    //Alert.alert('Settings pressed!');
-    /*this.props.navigation.replace('Settings', {
-      'numberOfPlayers': this.numberOfPlayers.toString(),
-      'duration': this.duration.toString()
-    });*/
-    //this.props.hideCallback();
+    this.setState({
+      showTimer: false
+    });
   };
+
+  closeSettings = (updatedPlayers) => {
+    if (!updatedPlayers) {
+      this.setState({
+        showTimer: true
+      });
+      return;
+    }
+
+    this.setState({
+        resetTimer: true,
+        isTimerCompleted: false,
+        showTimer: true,
+        players: updatedPlayers
+    });
+  }
 
   pausePressed = () => {
     // Toggle the paused state so that the button updates
@@ -129,15 +144,17 @@ export default class GameTimer extends React.Component {
   };
 }
 
-const defaultNumberOfPlayers = 4;
-//const defaultDuration = 30*60*1000; // 30 minutes
-const defaultDuration = 6*1000; // for testing purposes.
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
     justifyContent: 'center',
+  },
+  show: {
+    flex: 1
+  },
+  hide: {
+    flex: 0
   }
 });
 

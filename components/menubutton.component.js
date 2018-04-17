@@ -37,7 +37,6 @@ export default class MenuButton extends React.Component {
 
 const defaultIconSize = 20;
 
-// TODO the menu buttons aren't properly aligned.  Fix it.
 const styles = StyleSheet.create({
   container: {
     flex:1,
@@ -46,7 +45,6 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 13,
-    //textAlign: 'center'
   },
   iconTextDisabled: {
     color: Constants.disabledTextColor

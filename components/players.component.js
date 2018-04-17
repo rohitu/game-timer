@@ -6,8 +6,7 @@ import PlayerModel from '../models/player.model';
 
 /*
   Custom props for this component:
-  - numberOfPlayers: number [Required] Defines the number of players to display
-  - duration: number [Required] timer duration, in milliseconds, for each of the players
+  - players: Array<PlayerModel> [Required] The collection of players to display
   - isPaused: boolean [Optional] whether the timers in the component should be paused
   - disabled: boolean [Optional] whether the entire component is disabled
   - resetTimer: boolean [Optional] whether the timer should be reset for each player
@@ -17,24 +16,19 @@ export default class PlayersComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    this.players = [];
-    for (let i = 1; i <= this.props.numberOfPlayers; i++) {
-      this.players.push(new PlayerModel(i, this.props.duration));
-    }
-
     // Initialize to the first player being active. This will change as
     // the user clicks on the app.
     // If any timer completes, store that information so that other timers aren't active anymore
     this.nextPlayerIndex = 0;
     this.state = {
-      activePlayer: this.players[this.nextPlayerIndex]
+      activePlayer: this.props.players[this.nextPlayerIndex]
     };
   }
 
   render() {
     return (
-      <View style={{flex:1}}>
-        {this.players.map(this.renderPlayer)}
+      <View style={[{flex:1}, this.props.style]}>
+        {this.props.players.map(this.renderPlayer)}
       </View>
     );
   }
@@ -80,9 +74,9 @@ export default class PlayersComponent extends React.Component {
     if (this.props.disabled) return;
 
     //Alert.alert(`You selected: ${currentPlayer.name}, isActive: ${currentPlayer.isActive}`);
-    this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
+    this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.props.players.length;
     this.setState({
-      activePlayer: this.players[this.nextPlayerIndex]
+      activePlayer: this.props.players[this.nextPlayerIndex]
     });
   };
 

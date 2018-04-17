@@ -1,55 +1,50 @@
 import React from 'react';
-import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { Alert, AppRegistry, BackHandler, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 /*
   Custom props for this component:
-  - TBD
+  - TBD.
 */
 export default class Settings extends React.Component {
-
-  // The StackNavigator expects this to be defined for settings options for navigation events.
-  /*static navigationOptions = {
-    title: 'Settings'
-  };*/
-
   constructor(props) {
     super(props);
 
+    let duration = this.props.players[0].timeDurationMs.toString();
     this.state = {
-      numberOfPlayers: this.props.numberOfPlayers.toString(),
-      duration: this.props.duration.toString()
+      duration: duration
     };
   }
 
   // TODO remove spacing at the top and get a good navbar going
   render() {
+    BackHandler.addEventListener('hardwareBackPress', this.goBack);
     return (
       <View>
-        <View style={{height:30}}></View>
-        <TextInput
-          keyboardType="numeric"
-          onChangeText={(text) => this.setState({numberOfPlayers: text})}
-          value={this.state.numberOfPlayers}
-        />
+        <View style={[{height:30}, this.props.style]}></View>
         <TextInput
           keyboardType="numeric"
           onChangeText={(text) => this.setState({duration: text})}
           value={this.state.duration}
         />
-        <Button title="press me" onPress={this.navigateToGameTimer} />
+        <Button title="Save" onPress={this.saveChangesAndExit} />
       </View>
     );
   }
 
-  navigateToGameTimer = () => {
-    //this.props.hideCallback(parseInt(this.state.numberOfPlayers), parseInt(this.state.duration))
-    /*this.props.navigation.replace('GameTimer', {
-      'numberOfPlayers': this.state.numberOfPlayers,
-      'duration': this.state.duration
-    });*/
-    //this.props.navigation.pop();
+  saveChangesAndExit = () => {
+    let players = this.props.players;
+    let newDuration = parseInt(this.state.duration);
+    for (let i = 0; i < players.length; i++) {
+      players[i].timeDurationMs = newDuration;
+    }
+    this.goBack();
   };
+
+  goBack = () => {
+    BackHandler.removeEventListener('hardwareBackPress', this.goBack);
+    this.props.hideCallback();
+    return true;
+  }
 }
 
 
