@@ -17,32 +17,33 @@ export default class PlayersComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    this.players = [];
-    for (let i = 1; i <= this.props.numberOfPlayers; i++) {
-      this.players.push(new PlayerModel(i, this.props.duration));
-    }
-
     // Initialize to the first player being active. This will change as
     // the user clicks on the app.
     // If any timer completes, store that information so that other timers aren't active anymore
     this.nextPlayerIndex = 0;
+    // TODO - remove this.nextPlayerIndex and just use state
+    // TODO - make sure that the reset option also sets activePlayerIndex back to 0
     this.state = {
-      activePlayer: this.players[this.nextPlayerIndex]
+      //activePlayer: this.props.players[this.nextPlayerIndex]
+      activePlayerIndex: 0
     };
   }
 
   render() {
     return (
       <View style={{flex:1}}>
-        {this.players.map(this.renderPlayer)}
+        {this.props.players.map(this.renderPlayer)}
       </View>
     );
   }
 
   renderPlayer = (currentPlayer, index) => {
+
+
     let currentStyle = [styles.inactiveButton];
     let currentTextStyle = [styles.inactiveText];
-    let isCurrentPlayerActive = this.state.activePlayer === currentPlayer;
+    let isCurrentPlayerActive = this.state.activePlayerIndex === index;
+    //let isCurrentPlayerActive = this.state.activePlayer === currentPlayer;
     if (isCurrentPlayerActive) {
       currentStyle.push(styles.activeButton);
       currentTextStyle.push(styles.activeText);
@@ -80,14 +81,16 @@ export default class PlayersComponent extends React.Component {
     if (this.props.disabled) return;
 
     //Alert.alert(`You selected: ${currentPlayer.name}, isActive: ${currentPlayer.isActive}`);
-    this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
+    this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.props.players.length;
     this.setState({
-      activePlayer: this.players[this.nextPlayerIndex]
+      //activePlayer: this.props.players[this.nextPlayerIndex]
+      activePlayerIndex: this.nextPlayerIndex
     });
   };
 
   playerTimerComplete = () => {
-    Alert.alert(`"${this.state.activePlayer.name}" is out of time!`);
+    //Alert.alert(`"${this.state.activePlayer.name}" is out of time!`);
+    Alert.alert(`"${this.props.players[this.state.activePLayerIndex].name}" is out of time!`);
     this.props.onTimerComplete();
   };
 }

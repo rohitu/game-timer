@@ -1,6 +1,8 @@
 import React from 'react';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
+import { Alert } from 'react-native';
 
+import PlayerModel from './models/player.model';
 import GameTimer from './components/gametimer.component';
 import Settings from './components/settings.component';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,6 +14,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default App;
 */
+const defaultNumberOfPlayers = 4;
+const defaultDuration = 6*1000;
+let defaultPlayers = [];
+for (let i = 1; i <= defaultNumberOfPlayers; i++) {
+  defaultPlayers.push(new PlayerModel(i, defaultDuration));
+}
 
 class GameTimerScreen extends React.Component {
   /*static navigationOptions = {
@@ -21,45 +29,40 @@ class GameTimerScreen extends React.Component {
     //animationEnabled: true,
     //swipeEnabled: false
   };*/
-  constructor(props) {
-    super(props);
-    this.state = {
-      numberOfPlayers: 4,
-      duration: 6*1000
-    }
-  }
 
   render() {
+    const players = this.props.navigation.getParam('players', defaultPlayers);
+    //Alert.alert(`num: ${numPlayers}, duration: ${duration}`);
     return (
       <GameTimer
-        numberOfPlayers={this.state.numberOfPlayers}
-        duration={this.state.duration}
+        players={players}
       />
     );
   }
 }
 
 class SettingsScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      numberOfPlayers: 4,
-      duration: 6*1000
-    }
-  }
 
   render() {
+    const players = this.props.navigation.getParam('players', defaultPlayers);
     return (
       <Settings
-        numberOfPlayers={this.state.numberOfPlayers}
-        duration={this.state.duration}
+        players={players}
+        save={this.saveResults}
       />
     );
+  }
+
+  saveResults = (newPlayers) => {
+    //Alert.alert(`num: ${numPlayers}, duration: ${duration}`);
+    //this.props.navigation.navigate('Timer', {numberOfPlayers: numPlayers, duration: duration});
+    //players = newPlayers;
+    this.props.navigation.navigate('Timer', {players: newPlayers});
   }
 }
 
 const App = TabNavigator({
-  GameTimer: { screen: GameTimerScreen },
+  Timer: { screen: GameTimerScreen },
   Settings: { screen: SettingsScreen }
 },
 {
@@ -67,21 +70,13 @@ const App = TabNavigator({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
       let iconName;
-      /*if (routeName === 'GameTimer') {
-        iconName = `ios-information-circle${focused ? '' : '-outline'}`;
+      if (routeName === 'Timer') {
+        iconName = `ios-alarm${focused ? '' : '-outline'}`;
       } else if (routeName === 'Settings') {
         iconName = `ios-options${focused ? '' : '-outline'}`;
-      }*/
-      if (!focused) return;;
-      if (routeName === 'GameTimer') {
-        iconName = `ios-options-outline`;
-      } else if (routeName === 'Settings') {
-        iconName = `ios-information-circle-outline`;
       }
-
       return <Ionicons name={iconName} size={25} color={tintColor} />;
     },
-    //tabBarVisible: false
   }),
   tabBarOptions: {
     activeTintColor: 'tomato',

@@ -2,6 +2,8 @@ import React from 'react';
 import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
+import PlayerModel from '../models/player.model';
+
 /*
   Custom props for this component:
   - TBD
@@ -17,8 +19,10 @@ export default class Settings extends React.Component {
     super(props);
 
     this.state = {
-      numberOfPlayers: this.props.numberOfPlayers.toString(),
-      duration: this.props.duration.toString()
+      //numberOfPlayers: this.props.numberOfPlayers.toString(),
+      //duration: this.props.duration.toString()
+      numberOfPlayers: this.props.players.length.toString(),
+      duration: this.props.players[0].timeDurationMs.toString()
     };
   }
 
@@ -44,11 +48,19 @@ export default class Settings extends React.Component {
 
   navigateToGameTimer = () => {
     //this.props.hideCallback(parseInt(this.state.numberOfPlayers), parseInt(this.state.duration))
-    /*this.props.navigation.replace('GameTimer', {
+    /*this.props.navigation.navigate('GameTimer', {
       'numberOfPlayers': this.state.numberOfPlayers,
       'duration': this.state.duration
     });*/
     //this.props.navigation.pop();
+
+    let newPlayers = [];
+    const numberOfPlayers = parseInt(this.state.numberOfPlayers);
+    const duration = parseInt(this.state.duration);
+    for (let i = 1; i <= numberOfPlayers; i++) {
+      newPlayers.push(new PlayerModel(i, duration));
+    }
+    this.props.save(newPlayers);
   };
 }
 

@@ -31,6 +31,7 @@ export default class GameTimer extends React.Component {
     // If the app is paused, then show text to trigger Play (and vice-versa)
     let startPauseIconName = this.state.isPaused ? "play" : "pause";
     let startPauseIconText = this.state.isPaused ? "Start" : "Pause";
+    //Alert.alert(`numm: ${this.props.numberOfPlayers}, duration: ${this.props.duration}`);
 
     // Get defaults or access latest info from navigation state params
     // The navigation state params is where the Settings tab will relay info
@@ -43,8 +44,7 @@ export default class GameTimer extends React.Component {
     return (
       <View style={styles.container}>
         <Players
-          numberOfPlayers={this.props.numberOfPlayers}
-          duration={this.props.duration}
+          players={this.props.players}
           isPaused={this.state.isPaused}
           disabled={this.state.isTimerCompleted}
           onTimerComplete={this.timerCompleted}
