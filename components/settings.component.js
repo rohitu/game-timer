@@ -18,11 +18,13 @@ export default class Settings extends React.Component {
   constructor(props) {
     super(props);
 
+    //const players = this.props.navigation.state.params.players;
+    const players = this.props.players;
     this.state = {
       //numberOfPlayers: this.props.numberOfPlayers.toString(),
       //duration: this.props.duration.toString()
-      numberOfPlayers: this.props.players.length.toString(),
-      duration: this.props.players[0].timeDurationMs.toString()
+      numberOfPlayers: players.length.toString(),
+      duration: players[0].timeDurationMs.toString()
     };
   }
 
@@ -61,6 +63,7 @@ export default class Settings extends React.Component {
       newPlayers.push(new PlayerModel(i, duration));
     }
     this.props.save(newPlayers);
+    //this.props.navigation.navigate('Timer', {players: newPlayers});
   };
 }
 

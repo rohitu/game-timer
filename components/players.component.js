@@ -32,6 +32,7 @@ export default class PlayersComponent extends React.Component {
   render() {
     return (
       <View style={{flex:1}}>
+        <Text>{JSON.stringify(this.props.players)}</Text>
         {this.props.players.map(this.renderPlayer)}
       </View>
     );
