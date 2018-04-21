@@ -59,9 +59,6 @@ const AppNavigator = TabNavigator({
   Settings: { screen: Settings }
 },
 {
-  initialRouteParams: {
-    //players: allPlayers
-  },
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
@@ -76,7 +73,7 @@ const AppNavigator = TabNavigator({
   }),
   tabBarOptions: {
     activeTintColor: 'tomato',
-    inactiveTintColor: 'blue',
+    inactiveTintColor: 'gray',
   },
   tabBarComponent: TabBarBottom,
   tabBarPosition: 'bottom',

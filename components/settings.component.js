@@ -4,14 +4,16 @@ import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpaci
 import { connect } from 'react-redux';
 
 import PlayerModel from '../models/player.model';
-import { saveSettings } from '../action-creators';
+import { updateDuration, renamePlayer, addNewPlayer } from '../action-creators';
 
 const mapStateToProps = (state) => ({
-  players: state.players
+  players: state.players,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  saveChanges: (duration) => dispatch(saveSettings(duration))
+  updateDuration: (duration) => dispatch(updateDuration(duration)),
+  updatePlayer: (newName, playerIndex) => dispatch(renamePlayer(newName, playerIndex)),
+  addNewPlayer: () => dispatch(addNewPlayer()),
 });
 
 /*
@@ -19,72 +21,62 @@ const mapDispatchToProps = (dispatch) => ({
   - TBD
 */
 class Settings extends React.Component {
-  constructor(props) {
-    super(props);
-
-    //const players = this.props.navigation.state.params.players;
-    const players = this.props.players;
-    this.state = {
-      //numberOfPlayers: this.props.numberOfPlayers.toString(),
-      //duration: this.props.duration.toString()
-      numberOfPlayers: players.length.toString(),
-      duration: players[0].timeDurationMs.toString()
-    };
-  }
-
   // TODO remove spacing at the top and get a good navbar going
   render() {
+    let duration = this.props.players[0].timeDurationMs.toString();
     return (
       <View>
         <View style={{height:30}}></View>
-        <TextInput
-          keyboardType="numeric"
-          onChangeText={(text) => this.setState({numberOfPlayers: text})}
-          value={this.state.numberOfPlayers}
-        />
+        <Text style={styles.headerText}>Duration</Text>
         <TextInput
           keyboardType="numeric"
           onChangeText={this.updateDuration}
-          value={this.state.duration}
+          value={duration}
+          maxLength={maxDurationTextLength}
         />
+        <Text style={styles.headerText}>Players</Text>
+        {this.props.players.map(this.renderPlayerSettings)}
         {/*<Button title="press me" onPress={this.props.saveChanges} />*/}
+        <Button title="Add Player" onPress={this.props.addNewPlayer} />
       </View>
     );
   }
 
+  // TODO need to add functionality for resetting or clearing player's name to default
+  renderPlayerSettings = (player, index) => {
+    return (
+      <TextInput
+        key={index}
+        onChangeText={(text) => this.props.updatePlayer(text, index)}
+        value={player.isDefaultName() ? '' : player.name}
+        placeholder={player.isDefaultName() ? player.name : ''}
+        maxLength={maxPlayerNameLength}
+      />
+    );
+  }
+
   updateDuration = (text) => {
-    let newDuration;
     try {
-      newDuration = parseInt(text);
+      let newDuration = Number(text);
+      this.props.updateDuration(newDuration);
     } catch (error) {
       Alert.alert(`Error while updating duration: ${error}`);
       return;
     }
-
-    this.props.saveChanges(newDuration);
-    this.setState({
-      duration: text
-    });
   };
-
-  /*navigateToGameTimer = () => {
-    //this.props.hideCallback(parseInt(this.state.numberOfPlayers), parseInt(this.state.duration))
-    /*this.props.navigation.navigate('GameTimer', {
-      'numberOfPlayers': this.state.numberOfPlayers,
-      'duration': this.state.duration
-    });/
-    //this.props.navigation.pop();
-
-    let newPlayers = [];
-    const numberOfPlayers = parseInt(this.state.numberOfPlayers);
-    const duration = parseInt(this.state.duration);
-    for (let i = 1; i <= numberOfPlayers; i++) {
-      newPlayers.push(new PlayerModel(i, duration));
-    }
-    this.props.save(newPlayers);
-    //this.props.navigation.navigate('Timer', {players: newPlayers});
-  };*/
 }
+
+const maxPlayerNameLength = 10;
+
+// TODO this will be refactored out and changed once the interface for inputting duration is better.
+const maxDurationTextLength = 10;
+
+const styles = StyleSheet.create({
+  headerText: {
+    fontSize: 15,
+    fontWeight: 'bold'
+  },
+});
 
 export default connect(
   mapStateToProps,

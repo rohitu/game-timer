@@ -59,7 +59,7 @@ class GameTimer extends React.Component {
     // Maybe a circular button that's larger than the other two so it looks nice?
     return (
       <View style={styles.container}>
-      <Text>{JSON.stringify(players)}</Text>
+      {/*<Text>{JSON.stringify(players)}</Text>*/}
         <Players />
         {/*<MenuBar>
           <MenuButton

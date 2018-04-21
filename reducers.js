@@ -28,17 +28,32 @@ function players(previousPlayersState = defaultPlayers, action) {
   switch (action.type) {
     case Actions.cycleToNextPlayer:
       let clonedPlayers = previousPlayersState.map(p => p.clone());
-      let activePlayerIndex = clonedPlayers.findIndex(p => p.isActive);
-      let nextPlayerIndex = (activePlayerIndex + 1) % clonedPlayers.length;
+      const activePlayerIndex = clonedPlayers.findIndex(p => p.isActive);
+      const nextPlayerIndex = (activePlayerIndex + 1) % clonedPlayers.length;
       clonedPlayers[activePlayerIndex].isActive = false;
       clonedPlayers[nextPlayerIndex].isActive = true;
       return clonedPlayers;
-    case Actions.saveSettings:
+    case Actions.updateDuration:
       return previousPlayersState.map(p => {
         let newPlayer = p.clone();
         newPlayer.timeDurationMs = action.duration;
         return newPlayer;
       });
+    case Actions.renamePlayer:
+      return previousPlayersState.map((p, index) => {
+        let newPlayer = p.clone();
+        if (index === action.playerIndex) {
+          newPlayer.setName(action.newName);
+        }
+        return newPlayer;
+      });
+    case Actions.addNewPlayer:
+      const lastPlayer = previousPlayersState[previousPlayersState.length-1];
+      return previousPlayersState
+        .map(p => p.clone())
+        .concat([
+          new PlayerModel(lastPlayer.number+1, lastPlayer.timeDurationMs)
+        ])
     default:
       return previousPlayersState;
   }

@@ -20,6 +20,10 @@ export default class Player  {
     this.name = this.defaultName;
   }
 
+  isDefaultName() {
+    return this.name === this.defaultName;
+  }
+
   clone() {
     let clone = new Player(this.number, this.timeDurationMs, this.isActive);
     clone.setName(this.name);
