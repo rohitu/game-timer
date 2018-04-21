@@ -1,11 +1,14 @@
 import React from 'react';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import { Alert, View, Text } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
 import PlayerModel from './models/player.model';
 import GameTimer from './components/gametimer.component';
 import Settings from './components/settings.component';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import reducers from './reducers';
 
 class GameTimerScreen extends React.Component {
   render() {
@@ -49,13 +52,15 @@ for (let i = 1; i <= defaultNumberOfPlayers; i++) {
   allPlayers.push(new PlayerModel(i, defaultDuration));
 }
 
-const App = TabNavigator({
-  Timer: { screen: GameTimerScreen },
-  Settings: { screen: SettingsScreen }
+const AppNavigator = TabNavigator({
+  //Timer: { screen: GameTimerScreen },
+  //Settings: { screen: SettingsScreen }
+  Timer: { screen: GameTimer },
+  Settings: { screen: Settings }
 },
 {
   initialRouteParams: {
-    players: allPlayers
+    //players: allPlayers
   },
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
@@ -83,7 +88,20 @@ const App = TabNavigator({
 
 //const foo = { foo: 1};
 //const AppComponent = (<App screenProps={foo});
-export default App;
+//export default App;
+
+const store = createStore(reducers);
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <AppNavigator />
+      </Provider>
+    );
+  }
+}
+
 /*export default class AppComponent extends React.Component {
   render() {
     return (<App screenProps={foo} />);

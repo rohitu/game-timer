@@ -1,5 +1,5 @@
 export default class Player  {
-  constructor(number, timeDurationMs) {
+  constructor(number, timeDurationMs, isActive = false) {
     this.number = number;
     this.defaultName = `Player ${number}`;
     this.name = this.defaultName;
@@ -8,6 +8,8 @@ export default class Player  {
     // https://www.reddit.com/r/reactjs/comments/7w56q6/a_tiny_stopwatch_with_react_easy_state/
     // https://hackernoon.com/introducing-react-easy-state-1210a156fa16
     this.timeDurationMs = timeDurationMs;
+
+    this.isActive = isActive;
   }
 
   setName(name) {
@@ -16,5 +18,11 @@ export default class Player  {
 
   resetName() {
     this.name = this.defaultName;
+  }
+
+  clone() {
+    let clone = new Player(this.number, this.timeDurationMs, this.isActive);
+    clone.setName(this.name);
+    return clone;
   }
 }

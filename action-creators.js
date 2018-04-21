@@ -3,15 +3,22 @@
  */
 
 // TODO need to add an action for AddPlayer and update the settings view
+
+export const Actions = {
+  saveSettings: 'SAVE_SETTINGS',
+  cycleToNextPlayer: 'CYCLE_PLAYER',
+  onTimerComplete: 'TIMER_COMPLETE',
+};
+
  export const saveSettings = (duration) => ({
-   type: 'SAVE_SETTINGS',
+   type: Actions.saveSettings,
    duration: duration
  });
 
  export const cycleToNextPlayer = () => ({
-   type: 'CYCLE_PLAYER'
+   type: Actions.cycleToNextPlayer,
  });
 
 export const onTimerComplete = () => ({
-  type: 'TIMER_COMPLETE'
+  type: Actions.onTimerComplete
 });

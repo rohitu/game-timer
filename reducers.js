@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import PlayerModel from './models/player.model';
-import * as ActionCreators from './action-creators';
+import { Actions } from './action-creators';
 
 /*
 My state object will look like this:
@@ -26,6 +26,19 @@ for (let i = 1; i <= defaultNumberOfPlayers; i++) {
 
 function players(previousPlayersState = defaultPlayers, action) {
   switch (action.type) {
+    case Actions.cycleToNextPlayer:
+      let clonedPlayers = previousPlayersState.map(p => p.clone());
+      let activePlayerIndex = clonedPlayers.findIndex(p => p.isActive);
+      let nextPlayerIndex = (activePlayerIndex + 1) % clonedPlayers.length;
+      clonedPlayers[activePlayerIndex].isActive = false;
+      clonedPlayers[nextPlayerIndex].isActive = true;
+      return clonedPlayers;
+    case Actions.saveSettings:
+      return previousPlayersState.map(p => {
+        let newPlayer = p.clone();
+        newPlayer.timeDurationMs = action.duration;
+        return newPlayer;
+      });
     default:
       return previousPlayersState;
   }

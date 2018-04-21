@@ -5,29 +5,39 @@ import Players from './players.component';
 import MenuBar from './menubar.component';
 import MenuButton from './menubutton.component';
 
+import { connect } from 'react-redux';
+
 import PlayerModel from '../models/player.model';
+import { cycleToNextPlayer, onTimerComplete } from '../action-creators';
+
+const mapStateToProps = (state) => ({
+  players: state.players
+});
+
+const mapDispatchToProps = (dispatch) => ({
+});
 
 /*
   Custom props for this component:
   - navigation: Inherited from the StackNavigator library. See https://reactnavigation.org/docs/getting-started.html
 */
-export default class GameTimer extends React.Component {
+class GameTimer extends React.Component {
 
   constructor(props) {
     super(props);
 
     // Start the app paused.
     this.state = {
-      isPaused: true,
-      isTimerCompleted: false,
-      resetTimer: false
+      //isPaused: true,
+      //isTimerCompleted: false,
+      //resetTimer: false
     };
 }
 
   render() {
     // If the app is paused, then show text to trigger Play (and vice-versa)
-    let startPauseIconName = this.state.isPaused ? "play" : "pause";
-    let startPauseIconText = this.state.isPaused ? "Start" : "Pause";
+    let startPauseIconName = this.props.isPaused ? "play" : "pause";
+    let startPauseIconText = this.props.isPaused ? "Start" : "Pause";
     //Alert.alert(`numm: ${this.props.numberOfPlayers}, duration: ${this.props.duration}`);
     //Alert.alert(`screenProps: ${this.props.screenProps}`);
 
@@ -50,14 +60,8 @@ export default class GameTimer extends React.Component {
     return (
       <View style={styles.container}>
       <Text>{JSON.stringify(players)}</Text>
-        <Players
-          players={players}
-          isPaused={this.state.isPaused}
-          disabled={this.state.isTimerCompleted}
-          onTimerComplete={this.timerCompleted}
-          resetTimer={this.state.resetTimer}
-        />
-        <MenuBar>
+        <Players />
+        {/*<MenuBar>
           <MenuButton
             onPress={this.settingsPressed}
             disabled={!this.state.isPaused}
@@ -75,7 +79,7 @@ export default class GameTimer extends React.Component {
             iconName={"rotate-right"}
             buttonText={"Reset"}
           />
-        </MenuBar>
+        </MenuBar>*/}
       </View>
     );
   }
@@ -136,8 +140,6 @@ export default class GameTimer extends React.Component {
   };
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -145,6 +147,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   }
 });
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GameTimer);
 
 // Not sure if I need this
 //AppRegistry.registerComponent('GameTimer', () => GameTimer);

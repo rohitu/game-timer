@@ -1,20 +1,24 @@
 import React from 'react';
 import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { connect } from 'react-redux';
 
 import PlayerModel from '../models/player.model';
+import { saveSettings } from '../action-creators';
+
+const mapStateToProps = (state) => ({
+  players: state.players
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  saveChanges: (duration) => dispatch(saveSettings(duration))
+});
 
 /*
   Custom props for this component:
   - TBD
 */
-export default class Settings extends React.Component {
-
-  // The StackNavigator expects this to be defined for settings options for navigation events.
-  /*static navigationOptions = {
-    title: 'Settings'
-  };*/
-
+class Settings extends React.Component {
   constructor(props) {
     super(props);
 
@@ -40,20 +44,35 @@ export default class Settings extends React.Component {
         />
         <TextInput
           keyboardType="numeric"
-          onChangeText={(text) => this.setState({duration: text})}
+          onChangeText={this.updateDuration}
           value={this.state.duration}
         />
-        <Button title="press me" onPress={this.navigateToGameTimer} />
+        {/*<Button title="press me" onPress={this.props.saveChanges} />*/}
       </View>
     );
   }
 
-  navigateToGameTimer = () => {
+  updateDuration = (text) => {
+    let newDuration;
+    try {
+      newDuration = parseInt(text);
+    } catch (error) {
+      Alert.alert(`Error while updating duration: ${error}`);
+      return;
+    }
+
+    this.props.saveChanges(newDuration);
+    this.setState({
+      duration: text
+    });
+  };
+
+  /*navigateToGameTimer = () => {
     //this.props.hideCallback(parseInt(this.state.numberOfPlayers), parseInt(this.state.duration))
     /*this.props.navigation.navigate('GameTimer', {
       'numberOfPlayers': this.state.numberOfPlayers,
       'duration': this.state.duration
-    });*/
+    });/
     //this.props.navigation.pop();
 
     let newPlayers = [];
@@ -64,9 +83,13 @@ export default class Settings extends React.Component {
     }
     this.props.save(newPlayers);
     //this.props.navigation.navigate('Timer', {players: newPlayers});
-  };
+  };*/
 }
 
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Settings);
 
 // Not sure if I need this
 //AppRegistry.registerComponent('Settings', () => Settings);
