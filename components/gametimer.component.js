@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ActionButton from 'react-native-action-button';
+//import ActionButton from 'react-native-action-button';
+import { FloatingAction } from 'react-native-floating-action';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -16,7 +17,7 @@ import { cycleToNextPlayer, onTimerComplete, toggleTimer, resetTimer } from '../
 // FYI, the function does need to be wrapped in () for returning an object.
 // See https://stackoverflow.com/questions/45279552/react-syntax-error-unexpected-token-expected
 const mapStateToProps = (state) => ({
-  players: state.players,
+  //players: state.players,
   isPaused: state.isPaused,
   isTimerCompleted: state.isTimerCompleted,
   shouldResetTimer: state.shouldResetTimer,
@@ -36,11 +37,11 @@ class GameTimer extends React.Component {
     super(props);
 
     // Start the app paused.
-    this.state = {
+    //this.state = {
       //isPaused: true,
       //isTimerCompleted: false,
       //resetTimer: false
-    };
+    //};
 }
 
   render() {
@@ -62,8 +63,28 @@ class GameTimer extends React.Component {
         players: defaultPlayers
       });
     }
-    const players = this.props.navigation.state.params.players;*/
-    const players = this.props.players;
+    const players = this.props.navigation.state.params.players;
+    const players = this.props.players;*/
+
+    const collapsedActions = [
+      {
+        text: startPauseIconText,
+        icon: <Icon name={startPauseIconName} style={styles.actionButtonIcon} />,
+        name: startPauseIconName
+      },
+      {
+        text: 'Settings',
+        icon: <Icon name="gear" style={styles.actionButtonIcon} />,
+        name: 'gear'
+      },
+    ];
+    const expandedActions = collapsedActions.concat([
+      {
+        text: 'Reset',
+        icon: <Icon name="rotate-right" style={styles.actionButtonIcon} />,
+        name: 'rotate-right'
+      },
+    ]);
 
     // TODO it would be nice if the middle Play/Pause button was larger.
     // Maybe a circular button that's larger than the other two so it looks nice?
@@ -72,20 +93,45 @@ class GameTimer extends React.Component {
       {/*<Text>{JSON.stringify(players)}</Text>*/}
         <Players />
         <Text>{`IsPaused: ${this.props.isPaused}`}</Text>
-        <ActionButton
+        <FloatingAction
+          actions={this.props.isPaused ? expandedActions : collapsedActions}
+          position="right"
+          showBackground={false}
+          //overrideWithAction={true}
+          openOnMount={this.props.isPaused}
+        />
+        {/* Custom button from https://stackoverflow.com/questions/33135256/floating-action-button-on-react-native
+        <TouchableOpacity
+           style={{
+               borderWidth:1,
+               borderColor:'rgba(0,0,0,0.2)',
+               alignItems:'center',
+               justifyContent:'center',
+               width:70,
+               position: 'absolute',
+               bottom: 10,
+               right: 10,
+               height:70,
+               backgroundColor:'#fff',
+               borderRadius:100,
+             }}
+         >
+          <Icon name="plus"  size={30} color="#01a699" />
+         </TouchableOpacity>*/}
+        {/*<ActionButton
           active={this.props.isPaused}
           position="center"
           backgroundTappable={true}
           spacing={10}
           offsetY={5}
           degrees={0}
-          onPress={() => {/*Alert.alert('pressed');*/ this.props.toggleTimer();}}
+          onPress={this.props.toggleTimer}
           renderIcon={(active) => <Icon name={active ? "play" : "pause"} style={styles.actionButtonIcon} />}
         >
           <ActionButton.Item buttonColor='#9b59b6' title="Reset" onPress={this.props.resetTimer}>
             <Icon name={"rotate-right"} style={styles.actionButtonIcon} />
           </ActionButton.Item>
-        </ActionButton>
+        </ActionButton>*/}
         {/*<MenuBar>
           <MenuButton
             onPress={this.settingsPressed}
