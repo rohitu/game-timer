@@ -1,6 +1,6 @@
 import React from 'react';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
-import { Alert, View, Text } from 'react-native';
+import { Alert, Button, View, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -52,11 +52,25 @@ for (let i = 1; i <= defaultNumberOfPlayers; i++) {
   allPlayers.push(new PlayerModel(i, defaultDuration));
 }
 
+class PauseButton extends React.Component {
+  render() {
+    return (
+      <Button
+        title={"Pause"}
+        onPress={() => {
+          Alert.alert('button pressed');
+        }}
+      />
+    );
+  }
+}
+
 const AppNavigator = TabNavigator({
   //Timer: { screen: GameTimerScreen },
   //Settings: { screen: SettingsScreen }
   Timer: { screen: GameTimer },
-  Settings: { screen: Settings }
+  Settings: { screen: Settings },
+  //Pause: {screen: PauseButton}
 },
 {
   navigationOptions: ({ navigation }) => ({
@@ -70,6 +84,13 @@ const AppNavigator = TabNavigator({
       }
       return <Ionicons name={iconName} size={25} color={tintColor} />;
     },
+    headerRight: (
+      <Button
+        onPress={() => alert('This is a button!')}
+        title="Info"
+        color="#fff"
+      />
+    )
   }),
   tabBarOptions: {
     activeTintColor: 'tomato',

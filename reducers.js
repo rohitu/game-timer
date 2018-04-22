@@ -61,6 +61,11 @@ function players(previousPlayersState = defaultPlayers, action) {
 
 function isPaused(previousPausedState = true, action) {
   switch (action.type) {
+    case Actions.toggleTimer:
+      return !previousPausedState;
+    case Actions.resetTimer:
+    case Actions.onTimerComplete:
+      return true;
     default:
       return previousPausedState;
   }
@@ -68,6 +73,10 @@ function isPaused(previousPausedState = true, action) {
 
 function isTimerCompleted(previousTimerCompletedState = false, action) {
   switch (action.type) {
+    case Actions.resetTimer:
+      return false;
+    case Actions.onTimerComplete:
+      return true;
     default:
       return previousTimerCompletedState;
   }
@@ -75,6 +84,11 @@ function isTimerCompleted(previousTimerCompletedState = false, action) {
 
 function shouldResetTimer(previousResetTimerState = true, action) {
   switch (action.type) {
+    case Actions.resetTimer:
+      return true;
+    case Actions.onTimerComplete:
+    case Actions.toggleTimer:
+      return false;
     default:
       return previousResetTimerState;
   }

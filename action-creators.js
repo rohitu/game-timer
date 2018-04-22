@@ -9,6 +9,8 @@ export const Actions = {
   renamePlayer: 'RENAME_PLAYER',
   addNewPlayer: 'ADD_PLAYER',
   cycleToNextPlayer: 'CYCLE_PLAYER',
+  toggleTimer: 'TOGGLE_TIMER',
+  resetTimer: 'RESET_TIMER',
   onTimerComplete: 'TIMER_COMPLETE',
 };
 
@@ -29,6 +31,14 @@ export const addNewPlayer = () => ({
 
 export const cycleToNextPlayer = () => ({
   type: Actions.cycleToNextPlayer,
+});
+
+export const toggleTimer = () => ({
+  type: Actions.toggleTimer,
+});
+
+export const resetTimer = () => ({
+  type: Actions.resetTimer,
 });
 
 export const onTimerComplete = () => ({

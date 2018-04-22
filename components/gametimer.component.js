@@ -1,5 +1,8 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import ActionButton from 'react-native-action-button';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Players from './players.component';
 import MenuBar from './menubar.component';
@@ -8,13 +11,20 @@ import MenuButton from './menubutton.component';
 import { connect } from 'react-redux';
 
 import PlayerModel from '../models/player.model';
-import { cycleToNextPlayer, onTimerComplete } from '../action-creators';
+import { cycleToNextPlayer, onTimerComplete, toggleTimer, resetTimer } from '../action-creators';
 
+// FYI, the function does need to be wrapped in () for returning an object.
+// See https://stackoverflow.com/questions/45279552/react-syntax-error-unexpected-token-expected
 const mapStateToProps = (state) => ({
-  players: state.players
+  players: state.players,
+  isPaused: state.isPaused,
+  isTimerCompleted: state.isTimerCompleted,
+  shouldResetTimer: state.shouldResetTimer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  toggleTimer: () => dispatch(toggleTimer()),
+  resetTimer: () => dispatch(resetTimer()),
 });
 
 /*
@@ -22,7 +32,6 @@ const mapDispatchToProps = (dispatch) => ({
   - navigation: Inherited from the StackNavigator library. See https://reactnavigation.org/docs/getting-started.html
 */
 class GameTimer extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -37,6 +46,7 @@ class GameTimer extends React.Component {
   render() {
     // If the app is paused, then show text to trigger Play (and vice-versa)
     let startPauseIconName = this.props.isPaused ? "play" : "pause";
+    let startPauseIconColor = this.props.isPaused ? "green" : "red";
     let startPauseIconText = this.props.isPaused ? "Start" : "Pause";
     //Alert.alert(`numm: ${this.props.numberOfPlayers}, duration: ${this.props.duration}`);
     //Alert.alert(`screenProps: ${this.props.screenProps}`);
@@ -61,6 +71,21 @@ class GameTimer extends React.Component {
       <View style={styles.container}>
       {/*<Text>{JSON.stringify(players)}</Text>*/}
         <Players />
+        <Text>{`IsPaused: ${this.props.isPaused}`}</Text>
+        <ActionButton
+          active={this.props.isPaused}
+          position="center"
+          backgroundTappable={true}
+          spacing={10}
+          offsetY={5}
+          degrees={0}
+          onPress={() => {/*Alert.alert('pressed');*/ this.props.toggleTimer();}}
+          renderIcon={(active) => <Icon name={active ? "play" : "pause"} style={styles.actionButtonIcon} />}
+        >
+          <ActionButton.Item buttonColor='#9b59b6' title="Reset" onPress={this.props.resetTimer}>
+            <Icon name={"rotate-right"} style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+        </ActionButton>
         {/*<MenuBar>
           <MenuButton
             onPress={this.settingsPressed}
@@ -145,6 +170,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
     justifyContent: 'center',
+  },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
   }
 });
 

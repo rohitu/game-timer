@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'cyan',
     alignItems: 'stretch',
     justifyContent: 'center',
-    borderWidth: .5,
+    borderWidth: .3,
     borderColor: 'black'
   },
   buttonTextContainer: {
