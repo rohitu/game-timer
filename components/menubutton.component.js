@@ -4,15 +4,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { Constants } from '../util/commonstyles';
 
-/*
-  Custom props for this component:
-  - onPress: Callback function [Required] onPress callback function
-  - iconName: string [Required] name of the icon. Needs to be supported by react-native-vector-icons/FontAwesome
-  - buttonText: string [Required] text to display on the button.
-  - iconSize: number [Optional] custom size of the icon
-  - style: object [Optional] standard prop for container components. Any style here overrides default menubutton styles)
-  - disabled: boolean [Optional] whether the button is disabled (also sets opacity on the button label text)
-*/
+/**
+ * MenuButton component - a custom component I had to write because I didn't like
+ * a lot of the implementations out there, plus I really just wanted to try writing
+ * more components on my own since this is my first big project with React.
+ *
+ * Custom props for this component:
+ * - onPress: Callback function [Required] onPress callback function
+ * - iconName: string [Required] name of the icon. Needs to be supported by react-native-vector-icons/FontAwesome
+ * - buttonText: string [Required] text to display on the button.
+ * - iconSize: number [Optional] custom size of the icon
+ * - style: object [Optional] standard prop for container components. Any style here overrides default menubutton styles)
+ * - disabled: boolean [Optional] whether the button is disabled (also sets opacity on the button label text)
+ */
 export default class MenuButton extends React.Component {
   render() {
     let buttonTextStyles = [styles.iconText];
@@ -39,15 +43,15 @@ const defaultIconSize = 20;
 
 const styles = StyleSheet.create({
   container: {
+    flex:1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   iconText: {
     fontSize: 13,
-    textAlign: 'center'
   },
   iconTextDisabled: {
-    color: Constants.disabledTextColor
+    color: Constants.disabledTextColor,
   }
 });
 

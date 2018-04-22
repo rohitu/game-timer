@@ -2,55 +2,56 @@ import React from 'react';
 import { Alert, AppRegistry, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Timer } from 'react-native-stopwatch-timer';
 
+import { connect } from 'react-redux';
+
 import PlayerModel from '../models/player.model';
+import { cycleToNextPlayer, onTimerComplete } from '../action-creators';
 
-/*
-  Custom props for this component:
-  - numberOfPlayers: number [Required] Defines the number of players to display
-  - duration: number [Required] timer duration, in milliseconds, for each of the players
-  - isPaused: boolean [Optional] whether the timers in the component should be paused
-  - disabled: boolean [Optional] whether the entire component is disabled
-  - resetTimer: boolean [Optional] whether the timer should be reset for each player
-  - onTimerComplete: Callback function [Optional] called when any of the players' timers are completed
-*/
-export default class PlayersComponent extends React.Component {
-  constructor(props) {
-    super(props);
+/**
+ * The Players component is a combination of a presentational and a container
+ * component (see https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0).
+ * It's mostly presentational, which is why I opted to just put all the logic in
+ * the same place.
+ *
+ * The combination of the props in mapStateToProps and mapDispatchToProps tell
+ * you the full list of props that the Players component uses, all of which
+ * are currently injected in via 'connect'.
+ * If Players has any of its own props, I can use ownProps in the redux mappers.
+ */
+const mapStateToProps = (state) => ({
+  players: state.players,
+  isPaused: state.isPaused,
+  shouldResetTimer: state.shouldResetTimer,
+  isTimerCompleted: state.isTimerCompleted,
+});
 
-    this.players = [];
-    for (let i = 1; i <= this.props.numberOfPlayers; i++) {
-      this.players.push(new PlayerModel(i, this.props.duration));
-    }
+const mapDispatchToProps = (dispatch) => ({
+  cycleToNextPlayer: () => dispatch(cycleToNextPlayer()),
+  onTimerComplete: () => dispatch(onTimerComplete()),
+});
 
-    // Initialize to the first player being active. This will change as
-    // the user clicks on the app.
-    // If any timer completes, store that information so that other timers aren't active anymore
-    this.nextPlayerIndex = 0;
-    this.state = {
-      activePlayer: this.players[this.nextPlayerIndex]
-    };
-  }
-
+class PlayersComponent extends React.Component {
   render() {
     return (
       <View style={{flex:1}}>
-        {this.players.map(this.renderPlayer)}
+        {this.props.players.map(this.renderPlayer)}
       </View>
     );
   }
 
+  // Note: Defined as an anonymous function to maintain the 'this' object
   renderPlayer = (currentPlayer, index) => {
     let currentStyle = [styles.inactiveButton];
     let currentTextStyle = [styles.inactiveText];
-    let isCurrentPlayerActive = this.state.activePlayer === currentPlayer;
-    if (isCurrentPlayerActive) {
+
+    if (currentPlayer.isActive) {
       currentStyle.push(styles.activeButton);
       currentTextStyle.push(styles.activeText);
     }
 
-    let shouldAutostartTimer = isCurrentPlayerActive && !this.props.disabled && !this.props.isPaused;
+    let shouldAutostartTimer = currentPlayer.isActive && !this.props.isTimerCompleted && !this.props.isPaused;
     let timerStyleOptions = {
-      text: isCurrentPlayerActive ? activeText : inactiveText
+      text: currentPlayer.isActive ? activeText : inactiveText
     };
 
     return (
@@ -58,37 +59,21 @@ export default class PlayersComponent extends React.Component {
         activeOpacity={.3}
         key={index}
         style={currentStyle}
-        onPress={this.playerSelected}
-        disabled={this.props.disabled}
+        onPress={this.props.cycleToNextPlayer}
+        disabled={this.props.isTimerCompleted}
       >
-        <View style={isCurrentPlayerActive ? {} : styles.buttonTextContainer}>
+        <View style={currentPlayer.isActive ? {} : styles.buttonTextContainer}>
           <Text style={currentTextStyle}>{currentPlayer.name}</Text>
           <Timer
             totalDuration={currentPlayer.timeDurationMs}
             start={shouldAutostartTimer}
-            reset={this.props.resetTimer}
-            handleFinish={this.playerTimerComplete}
+            reset={this.props.shouldResetTimer}
+            handleFinish={this.props.onTimerComplete}
             options={timerStyleOptions}
           />
         </View>
       </TouchableOpacity>
     );
-  };
-
-  // Note: Defined as an anonymous function to maintain the 'this' object
-  playerSelected = () => {
-    if (this.props.disabled) return;
-
-    //Alert.alert(`You selected: ${currentPlayer.name}, isActive: ${currentPlayer.isActive}`);
-    this.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.players.length;
-    this.setState({
-      activePlayer: this.players[this.nextPlayerIndex]
-    });
-  };
-
-  playerTimerComplete = () => {
-    Alert.alert(`"${this.state.activePlayer.name}" is out of time!`);
-    this.props.onTimerComplete();
   };
 }
 
@@ -116,7 +101,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'cyan',
     alignItems: 'stretch',
     justifyContent: 'center',
-    borderWidth: .5,
+    borderWidth: .3,
     borderColor: 'black'
   },
   buttonTextContainer: {
@@ -128,5 +113,10 @@ const styles = StyleSheet.create({
   inactiveText,
 });
 
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PlayersComponent);
+
 // Not sure if I need this
-//AppRegistry.registerComponent('Player', () => PlayerComponent);
+//AppRegistry.registerComponent('Players', () => PlayersComponent);

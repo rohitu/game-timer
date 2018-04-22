@@ -16,7 +16,7 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "node node_modules/jest/bin/jest.js",
+    "test": "node node_modules/jest/bin/jest.js --verbose",
     "flow": "flow"
   },
   "jest": {
@@ -24,9 +24,12 @@
   },
   "dependencies": {
     "expo": "^25.0.0",
+    "npm": "^4.6.1",
     "react": "16.2.0",
     "react-native": "0.52.0",
     "react-native-stopwatch-timer": "0.0.20",
-    "react-native-vector-icons": "^4.5.0"
+    "react-native-vector-icons": "^4.5.0",
+    "react-navigation": "^1.5.9",
+    "react-redux": "^5.0.7"
   }
 }
