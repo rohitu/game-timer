@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import ActionButton from 'react-native-action-button';
-import { FloatingAction } from 'react-native-floating-action';
+//import { FloatingAction } from 'react-native-floating-action';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -93,13 +93,13 @@ class GameTimer extends React.Component {
       {/*<Text>{JSON.stringify(players)}</Text>*/}
         <Players />
         <Text>{`IsPaused: ${this.props.isPaused}`}</Text>
-        <FloatingAction
+        {/*<FloatingAction
           actions={this.props.isPaused ? expandedActions : collapsedActions}
           position="right"
           showBackground={false}
           //overrideWithAction={true}
           openOnMount={this.props.isPaused}
-        />
+        />*/}
         {/* Custom button from https://stackoverflow.com/questions/33135256/floating-action-button-on-react-native
         <TouchableOpacity
            style={{
@@ -132,25 +132,25 @@ class GameTimer extends React.Component {
             <Icon name={"rotate-right"} style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>*/}
-        {/*<MenuBar>
+        <MenuBar>
           <MenuButton
             onPress={this.settingsPressed}
-            disabled={!this.state.isPaused}
+            disabled={!this.props.isPaused}
             iconName={"gear"}
             buttonText={"Settings"}
           />
           <MenuButton
-             onPress={this.pausePressed}
-             disabled={this.state.isTimerCompleted}
+             onPress={this.props.toggleTimer}
+             disabled={this.props.isTimerCompleted}
              iconName={startPauseIconName}
              buttonText={startPauseIconText}
            />
           <MenuButton
-            onPress={this.resetPressed}
+            onPress={this.props.resetTimer}
             iconName={"rotate-right"}
             buttonText={"Reset"}
           />
-        </MenuBar>*/}
+        </MenuBar>
       </View>
     );
   }
@@ -170,6 +170,7 @@ class GameTimer extends React.Component {
       'duration': this.duration.toString()
     });*/
     //this.props.hideCallback();
+    this.props.navigation.navigate('Settings');
   };
 
   pausePressed = () => {

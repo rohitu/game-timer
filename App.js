@@ -65,7 +65,23 @@ class PauseButton extends React.Component {
   }
 }
 
-const AppNavigator = TabNavigator({
+// Deciding to try out StackNavigator and hide it entirely rather than using a visible TabNavigator
+const AppNavigator = StackNavigator({
+  Timer: {
+    screen: GameTimer,
+    navigationOptions: {
+      header: null
+    }
+  },
+  Settings: {
+    screen: Settings,
+    navigationOptions: {
+      headerTitle: 'Settings'
+    }
+  }
+});
+
+/*const AppNavigator = TabNavigator({
   //Timer: { screen: GameTimerScreen },
   //Settings: { screen: SettingsScreen }
   Timer: { screen: GameTimer },
@@ -102,7 +118,7 @@ const AppNavigator = TabNavigator({
   swipeEnabled: false,
   showLabel: false,
 }
-);
+);*/
 
 //const foo = { foo: 1};
 //const AppComponent = (<App screenProps={foo});
