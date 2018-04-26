@@ -14,6 +14,7 @@ export const Actions = {
   updateDuration: 'UPDATE_DURATION',
   renamePlayer: 'RENAME_PLAYER',
   addNewPlayer: 'ADD_PLAYER',
+  removePlayer: 'REMOVE_PLAYER',
   cycleToNextPlayer: 'CYCLE_PLAYER',
   toggleTimer: 'TOGGLE_TIMER',
   resetTimer: 'RESET_TIMER',
@@ -33,6 +34,11 @@ export const renamePlayer = (newName, playerIndex) => ({
 
 export const addNewPlayer = () => ({
   type: Actions.addNewPlayer,
+});
+
+export const removePlayer = (playerIndex) => ({
+  type: Actions.removePlayer,
+  playerIndex: playerIndex,
 });
 
 export const cycleToNextPlayer = () => ({

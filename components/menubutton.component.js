@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 
 import { Constants } from '../util/commonstyles';
 
@@ -25,6 +25,7 @@ export default class MenuButton extends React.Component {
     }
 
     let iconColor = this.props.disabled ? Constants.disabledTextColor : Constants.defaultTextColor;
+    let iconStyle = this.props.iconRotation ? { transform: [{rotate: `${this.props.iconRotation}deg`}] } : {};
 
     return (
       <TouchableOpacity
@@ -32,7 +33,7 @@ export default class MenuButton extends React.Component {
         onPress={this.props.onPress}
         disabled={this.props.disabled}
       >
-        <Icon name={this.props.iconName} size={this.props.iconSize || defaultIconSize} color={iconColor} />
+        <Icon name={this.props.iconName} size={this.props.iconSize || defaultIconSize} color={iconColor} style={iconStyle} />
         <Text style={buttonTextStyles}>{this.props.buttonText}</Text>
       </TouchableOpacity>
     );

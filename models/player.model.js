@@ -14,7 +14,7 @@ export default class Player  {
   }
 
   setName(name) {
-    this.name = name;
+    this.name = name ? name : this.defaultName;
   }
 
   resetName() {

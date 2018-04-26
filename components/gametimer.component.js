@@ -49,7 +49,8 @@ class GameTimer extends React.Component {
           <MenuButton
             onPress={this.settingsPressed}
             disabled={!this.props.isPaused}
-            iconName="gear"
+            iconName="sliders"
+            iconRotation={90}
             buttonText="Settings"
           />
           <MenuButton
@@ -60,7 +61,7 @@ class GameTimer extends React.Component {
            />
           <MenuButton
             onPress={this.props.resetTimer}
-            iconName="rotate-right"
+            iconName="rotate-cw"
             buttonText="Reset"
           />
         </MenuBar>

@@ -33,12 +33,13 @@ for (let i = 1; i <= defaultNumberOfPlayers; i++) {
 }
 
 function players(previousPlayersState = defaultPlayers, action) {
+  let clonedPlayers;
   switch (action.type) {
     // When cycling to the next player, copy the previous 'players' array,
     // update the previous current player to inactive, and set next player
     // to active.
     case Actions.cycleToNextPlayer:
-      let clonedPlayers = previousPlayersState.map(p => p.clone());
+      clonedPlayers = previousPlayersState.map(p => p.clone());
       const activePlayerIndex = clonedPlayers.findIndex(p => p.isActive);
       const nextPlayerIndex = (activePlayerIndex + 1) % clonedPlayers.length;
       clonedPlayers[activePlayerIndex].isActive = false;
@@ -73,7 +74,14 @@ function players(previousPlayersState = defaultPlayers, action) {
         .map(p => p.clone())
         .concat([
           new PlayerModel(lastPlayer.number+1, lastPlayer.timeDurationMs)
-        ])
+        ]);
+
+    // Clone the current players and splice out the one at the given index.
+    // TODO fix bug where removing a middle item stops showing placeholder in text input.
+    case Actions.removePlayer:
+      clonedPlayers = previousPlayersState.map(p => p.clone());
+      clonedPlayers.splice(action.playerIndex, 1);
+      return clonedPlayers;
 
     // For all other actions, don't change 'state.players'.
     default:
