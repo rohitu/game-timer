@@ -3,6 +3,9 @@ import { combineReducers } from 'redux';
 import PlayerModel from './models/player.model';
 import { Actions } from './action-creators';
 
+// TODO I'm simply using moment as a way to do easy math.
+import moment from 'moment';
+
 /**
  * The reducers in this file map 1:1 with the items in the redux state store.
  * Each function maps exactly to the property in the app's state.
@@ -20,11 +23,15 @@ import { Actions } from './action-creators';
  * - isPaused: boolean
  * - isTimerCompleted: boolean
  * - shouldResetTimer: boolean
+ * - durationMoment: moment (TODO see if this makes sense here)
+ * - duration: { hours, mins, seconds }
  */
 
 const defaultNumberOfPlayers = 4;
 //const defaultDuration = 30*60*1000; // 30 minutes
 const defaultDuration = 6*1000; // for testing purposes
+//const defaultDurationMoment = moment({milliseconds: defaultDuration});
+const defaultDurationObj = { hours: 0, minutes: 0, seconds: 6 };
 
 // Create the default players, with the first player being active.
 let defaultPlayers = [];
@@ -48,10 +55,38 @@ function players(previousPlayersState = defaultPlayers, action) {
 
     // When updating the duration, make sure all players now have the new
     // duration.
+    // I expect that action.duration has hours, minutes, seconds String properties
+    // that are passed directly to moment.duration
     case Actions.updateDuration:
+      //const newDuration = moment.duration({
+        //...action.duration
+        //seconds: 44,
+      //});
+
+      // TODO this makes an assumption that if a string value is passed in, then it's a valid number.
+      // I should fix that.
+      if(!action.duration.hours || !action.duration.minutes || !action.duration.seconds)
+      {
+        return previousPlayersState;
+      }
+
+      const newHrs = parseInt(action.duration.hours);
+      const newMins = parseInt(action.duration.minutes);
+      const newSecs = parseInt(action.duration.seconds);
+      /*if(!newHrs || !newMins || !newSecs)
+      {
+        return previousPlayersState;
+      }*/
+
+      const newDuration = newHrs * 60 * 60 * 1000
+        + newMins * 60 * 1000
+        + newSecs * 1000;
       return previousPlayersState.map(p => {
         let newPlayer = p.clone();
-        newPlayer.timeDurationMs = action.duration;
+        newPlayer.setName('foo!');
+        //newPlayer.setName(newHrs.toString());
+        //newPlayer.timeDurationMs = 44*1000;//newDuration.milliseconds();
+        newPlayer.timeDurationMs = newDuration;
         return newPlayer;
       });
 
@@ -76,12 +111,10 @@ function players(previousPlayersState = defaultPlayers, action) {
           new PlayerModel(lastPlayer.number+1, lastPlayer.timeDurationMs)
         ]);
 
-    // Clone the current players and splice out the one at the given index.
-    // TODO fix bug where removing a middle item stops showing placeholder in text input.
+    // Filter the player to remove.
     case Actions.removePlayer:
-      clonedPlayers = previousPlayersState.map(p => p.clone());
-      clonedPlayers.splice(action.playerIndex, 1);
-      return clonedPlayers;
+      return previousPlayersState
+        .filter((p, index) => action.playerIndex !== index);
 
     // For all other actions, don't change 'state.players'.
     default:
@@ -150,13 +183,36 @@ function shouldResetTimer(previousResetTimerState = true, action) {
   }
 }
 
+/*function durationMoment(previousDurationMoment = defaultDurationMoment, action) {
+  switch (action.type) {
+    default:
+      return previousDurationMoment;
+  }
+}*/
+
+// TODO this only updates the view for the three text inputs for the duration.
+// The actual duration update to the players object happens in the players reducer above.
+/*function duration(previousDuration = defaultDurationObj, action) {
+  switch (action.type) {
+    case Actions.updateDuration:
+      return {
+        hours: action.duration.hours || previousDuration.hours,
+        minutes: action.duration.minutes || previousDuration.minutes,
+        seconds: action.duration.seconds || previousDuration.seconds,
+      };
+    default:
+      return previousDuration;
+  }
+}*/
+
 // Combine all the reducers into one. This should match 1:1 with the
 // properties in the state.
 const reducers = combineReducers({
   players,
   isPaused,
   isTimerCompleted,
-  shouldResetTimer
+  shouldResetTimer,
+  //duration,
 });
 
 export default reducers;
