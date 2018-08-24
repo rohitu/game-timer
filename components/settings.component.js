@@ -3,9 +3,6 @@ import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpaci
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import FloatLabelTextInput from 'react-native-floating-label-text-input';
-import moment from 'moment';
-
-//import DateTimePicker from 'react-native-modal-datetime-picker';
 
 import { updateDuration, renamePlayer, addNewPlayer, removePlayer } from '../action-creators';
 
@@ -39,24 +36,17 @@ class Settings extends React.Component {
   }
 
   render() {
-    let durationMs = this.props.players[0].timeDurationMs;//.toString();
-    //const durationMoment = moment.duration({milliseconds: durationMs});
-    //const hours = durationMoment.hours().toString();
-    //const minutes = durationMoment.minutes().toString();
-    //const seconds = durationMoment.seconds().toString();
+    let durationMs = this.props.players[0].timeDurationMs;
+
+    // I'm manually doing math right now :(
     const hours = Math.floor(durationMs / (60*60*1000)).toString();
     durationMs = durationMs % (60*60*1000);
     const minutes = Math.floor(durationMs / (60*1000)).toString();
     durationMs = durationMs % (60*1000);
     const seconds = Math.floor(durationMs / (1000)).toString();
 
-    // I'd prefer to use momentjs, but the DateTimePicker component I'm using
-    // requires a date object.  I can create a Date object from a millisecond value,
-    // so that's what I'm going to do to represent time.
-    // Don't trust the year/month/day values from this variable.
     // TODO go through and clean up styles and everything here once you have it figured out
     // TODO need to figure out how to set the proper background for the duration inputs
-    //const date = new Date(duration);
     return (
       <View>
         <Text style={styles.headerText}>Duration</Text>
@@ -93,13 +83,6 @@ class Settings extends React.Component {
             />
           </View>
         </View>
-        {/*<TextInput
-          keyboardType="numeric"
-          onChangeText={this.onChangeDuration}
-          value={duration}
-          maxLength={maxDurationTextLength}
-        />*/}
-        {/*this.renderDurationPicker()*/}
         <Text style={styles.headerText}>Players</Text>
         {this.props.players.map(this.renderPlayerSettings)}
         <TouchableOpacity
@@ -124,7 +107,7 @@ class Settings extends React.Component {
             <TextInput
               style={styles.playerTextInput}
               underlineColorAndroid="transparent"
-              onChangeText={(text) => this.props.updateDuration(text)}
+              onChangeText={(text) => this.props.updatePlayer(text, index)}
               value={player.isDefaultName() ? '' : player.name}
               placeholder={player.isDefaultName() ? player.defaultName : ''}
               maxLength={maxPlayerNameLength}
@@ -148,55 +131,6 @@ class Settings extends React.Component {
       </View>
     );
   }
-
-  /*popupTimePicker = () => this.setState({showTimePicker: true});
-  hideTimePicker = () => this.setState({showTimePicker: false});
-  confirmTimePickerSelection = (newdate) => {
-    // Date.getTime returns the total number of milliseconds from Jan 1, 1970.
-    // That's the default date that gets set when I use new Date(duration) earlier.
-    // That's why this all works.
-    this.props.updateDuration(newdate.getTime());
-    this.hideTimePicker();
-  };
-
-  renderDurationPicker = (date) => {
-    return (
-      <Text>{`${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`}</Text>
-      <Button title="Change duration" onPress={this.popupTimePicker} />
-      <DateTimePicker
-        isVisible={this.state.showTimePicker}
-        mode="time"
-        date={date}
-        onConfirm={this.confirmTimePickerSelection}
-        onCancel={this.hideTimePicker}
-      />
-    );
-    /*
-    return (
-      <View>
-        <Text>{this.state.date.toString()}</Text>
-        <Button title="Change duration" onPress={() => this.setState({showTimePicker: true})} />
-        <DateTimePicker
-          isVisible={this.state.showTimePicker}
-          mode="time"
-          date={this.state.date}
-          onConfirm={(newdate) => this.setState({showTimePicker: false, date: newdate})}
-          onCancel={() => this.setState({showTimePicker: false})}
-        />
-        <Text>{this.state.date.toString()}</Text>
-      </View>
-    );/
-  }*/
-
-  onChangeDuration = (text) => {
-    try {
-      let newDuration = Number(text);
-      this.props.updateDuration(newDuration);
-    } catch (error) {
-      Alert.alert(`Error while updating duration: ${error}`);
-      return;
-    }
-  };
 }
 
 const maxPlayerNameLength = 10;
@@ -217,7 +151,7 @@ const styles = StyleSheet.create({
   },
   durationTextInput: {
     width: 5,
-    backgroundColor: 'rgba(52,52,52,0)',
+    backgroundColor: 'rgba(52,52,52,0)', // this isn't working, and neither is 'transparent'
     textAlign: 'center',
   },
   playerDisplayContainer: {
