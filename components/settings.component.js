@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import FloatLabelTextInput from 'react-native-floating-label-text-input';
 
 import { updateDuration, renamePlayer, addNewPlayer, removePlayer } from '../action-creators';
+import { millisecondsToHms } from '../util/date-calc';
 
 /**
  * The Settings component is a combination of a presentational and a container
@@ -36,17 +37,13 @@ class Settings extends React.Component {
   }
 
   render() {
-    let durationMs = this.props.players[0].timeDurationMs;
-
-    // I'm manually doing math right now :(
-    const hours = Math.floor(durationMs / (60*60*1000)).toString();
-    durationMs = durationMs % (60*60*1000);
-    const minutes = Math.floor(durationMs / (60*1000)).toString();
-    durationMs = durationMs % (60*1000);
-    const seconds = Math.floor(durationMs / (1000)).toString();
+    const durationMs = this.props.players[0].timeDurationMs;
+    const hms = millisecondsToHms(durationMs);
 
     // TODO go through and clean up styles and everything here once you have it figured out
     // TODO need to figure out how to set the proper background for the duration inputs
+    // FYI on fancy syntax: I'm spreading the original hms object into another object (easy way to copy)
+    // and then overriding one of the values based on which the text input corresponds to.
     return (
       <View>
         <Text style={styles.headerText}>Duration</Text>
@@ -54,32 +51,32 @@ class Settings extends React.Component {
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
             <FloatLabelTextInput
               style={styles.durationTextInput}
-              value={hours}
+              value={hms.hours.toString()}
               placeholder="HH"
               maxLength={2}
               keyboardType="numeric"
               selectionColor="rgba(52,52,52,0)"
-              onChangeTextValue={(newHrs) => this.props.updateDuration({ hours: newHrs, minutes, seconds })}
+              onChangeTextValue={(newHrs) => this.props.updateDuration({ ...hms, hours: newHrs })}
             />
             <Text style={{marginHorizontal: 5}}>:</Text>
             <FloatLabelTextInput
               style={styles.durationTextInput}
               noBorder="true"
-              value={minutes}
+              value={hms.minutes.toString()}
               placeholder="mm"
               maxLength={2}
               keyboardType="numeric"
-              onChangeTextValue={(newMins) => this.props.updateDuration({ hours, minutes: newMins, seconds })}
+              onChangeTextValue={(newMins) => this.props.updateDuration({ ...hms, minutes: newMins })}
             />
             <Text style={{marginHorizontal: 5}}>:</Text>
             <FloatLabelTextInput
               style={styles.durationTextInput}
               noBorder="true"
-              value={seconds}
+              value={hms.seconds.toString()}
               placeholder="ss"
               maxLength={2}
               keyboardType="numeric"
-              onChangeTextValue={(newSecs) => this.props.updateDuration({ hours, minutes, seconds: newSecs })}
+              onChangeTextValue={(newSecs) => this.props.updateDuration({ ...hms, seconds: newSecs })}
             />
           </View>
         </View>
@@ -134,11 +131,7 @@ class Settings extends React.Component {
 }
 
 const maxPlayerNameLength = 10;
-
-// TODO this will be refactored out and changed once the interface for inputting duration is better.
-const maxDurationTextLength = 10;
-
-const playerFontSize = 18;
+ playerFontSize = 18;
 const playerFontColor = '#778899'; // Grey Slate - http://www.color-hex.com/color/778899
 
 const styles = StyleSheet.create({

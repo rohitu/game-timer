@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import PlayerModel from './models/player.model';
 import { Actions } from './action-creators';
+import { hmsToMilliseconds } from './util/date-calc';
 
 /**
  * The reducers in this file map 1:1 with the items in the redux state store.
@@ -48,25 +49,19 @@ function players(previousPlayersState = defaultPlayers, action) {
 
     // When updating the duration, make sure all players now have the new
     // duration.
-    // I expect that action.duration has hours, minutes, seconds String properties
-    // that are passed directly to moment.duration
+    // I expect that action.duration has hours, minutes, seconds fields that
+    // are either Numbers or Strings and I type-check and calculate appropriately.
     case Actions.updateDuration:
-      // TODO this makes an assumption that if a string value is passed in, then it's a valid number.
-      // I should fix that.
-      // TODO write yourself a convert utility function that converts HMS to milliseconds and
-      // returns false/undefined if it's not a valid option (but beware that 0 is falsy)
-      if(!action.duration.hours || !action.duration.minutes || !action.duration.seconds)
-      {
-        return previousPlayersState;
-      }
+      if (!action.duration) return previousPlayersState;
 
-      const newHrs = parseInt(action.duration.hours);
-      const newMins = parseInt(action.duration.minutes);
-      const newSecs = parseInt(action.duration.seconds);
+      const newDuration = hmsToMilliseconds(
+        parseInt(action.duration.hours),
+        parseInt(action.duration.minutes),
+        parseInt(action.duration.seconds)
+      );
 
-      const newDuration = newHrs * 60 * 60 * 1000
-        + newMins * 60 * 1000
-        + newSecs * 1000;
+      if (!newDuration) return previousPlayersState;
+
       return previousPlayersState.map(p => {
         let newPlayer = p.clone();
         newPlayer.timeDurationMs = newDuration;
