@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, AppRegistry, Button, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import FloatLabelTextInput from 'react-native-floating-label-text-input';
@@ -30,7 +30,6 @@ const mapDispatchToProps = (dispatch) => ({
   removePlayer: (playerIndex) => dispatch(removePlayer(playerIndex)),
 });
 
-// TODO add logic for maximum number of players and maybe consolidate in a config file in util/
 class Settings extends React.Component {
   constructor(props) {
     super(props);
@@ -40,56 +39,64 @@ class Settings extends React.Component {
     const durationMs = this.props.players[0].timeDurationMs;
     const hms = millisecondsToHms(durationMs);
 
+    const maxNumberOfPlayers = 5;
+    const isMaxPlayers = this.props.players.length >= maxNumberOfPlayers;
+    const addPlayerButtonStyles = [ styles.addPlayerButton ];
+    let addPlayerButtonTextColor = '#ffffff';
+    if (isMaxPlayers) {
+      addPlayerButtonStyles.push(styles.disabledButton);
+      addPlayerButtonTextColor = `${addPlayerButtonTextColor}${disabledFontOpacity*3}`;
+    }
+
     // TODO go through and clean up styles and everything here once you have it figured out
     // TODO need to figure out how to set the proper background for the duration inputs
     // FYI on fancy syntax: I'm spreading the original hms object into another object (easy way to copy)
     // and then overriding one of the values based on which the text input corresponds to.
     return (
-      <View>
+      <ScrollView>
         <Text style={styles.headerText}>Duration</Text>
-        <View style={{}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <FloatLabelTextInput
-              style={styles.durationTextInput}
-              value={hms.hours.toString()}
-              placeholder="HH"
-              maxLength={2}
-              keyboardType="numeric"
-              selectionColor="rgba(52,52,52,0)"
-              onChangeTextValue={(newHrs) => this.props.updateDuration({ ...hms, hours: newHrs })}
-            />
-            <Text style={{marginHorizontal: 5}}>:</Text>
-            <FloatLabelTextInput
-              style={styles.durationTextInput}
-              noBorder="true"
-              value={hms.minutes.toString()}
-              placeholder="mm"
-              maxLength={2}
-              keyboardType="numeric"
-              onChangeTextValue={(newMins) => this.props.updateDuration({ ...hms, minutes: newMins })}
-            />
-            <Text style={{marginHorizontal: 5}}>:</Text>
-            <FloatLabelTextInput
-              style={styles.durationTextInput}
-              noBorder="true"
-              value={hms.seconds.toString()}
-              placeholder="ss"
-              maxLength={2}
-              keyboardType="numeric"
-              onChangeTextValue={(newSecs) => this.props.updateDuration({ ...hms, seconds: newSecs })}
-            />
-          </View>
+        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 10}}>
+          <FloatLabelTextInput
+            style={styles.durationTextInput}
+            value={hms.hours.toString()}
+            placeholder="HH"
+            maxLength={2}
+            keyboardType="numeric"
+            selectionColor="rgba(52,52,52,0)"
+            onChangeTextValue={(newHrs) => this.props.updateDuration({ ...hms, hours: newHrs })}
+          />
+          <Text style={{marginHorizontal: 5}}>:</Text>
+          <FloatLabelTextInput
+            style={styles.durationTextInput}
+            noBorder="true"
+            value={hms.minutes.toString()}
+            placeholder="mm"
+            maxLength={2}
+            keyboardType="numeric"
+            onChangeTextValue={(newMins) => this.props.updateDuration({ ...hms, minutes: newMins })}
+          />
+          <Text style={{marginHorizontal: 5}}>:</Text>
+          <FloatLabelTextInput
+            style={styles.durationTextInput}
+            noBorder="true"
+            value={hms.seconds.toString()}
+            placeholder="ss"
+            maxLength={2}
+            keyboardType="numeric"
+            onChangeTextValue={(newSecs) => this.props.updateDuration({ ...hms, seconds: newSecs })}
+          />
         </View>
         <Text style={styles.headerText}>Players</Text>
         {this.props.players.map(this.renderPlayerSettings)}
         <TouchableOpacity
-          style={styles.addPlayerButton}
+          style={addPlayerButtonStyles}
           onPress={this.props.addNewPlayer}
+          disabled={isMaxPlayers}
         >
-          <Icon style={{marginRight: 15}} name="user-plus" size={playerFontSize} color="white" />
-          <Text style={[styles.playerTextInput, {color:"white"}]}>{"Add Player"}</Text>
+          <Icon style={{marginRight: 15}} name="user-plus" size={playerFontSize} color={addPlayerButtonTextColor} />
+          <Text style={[styles.playerTextInput, {color:addPlayerButtonTextColor}]}>{"Add Player"}</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -131,8 +138,9 @@ class Settings extends React.Component {
 }
 
 const maxPlayerNameLength = 10;
- playerFontSize = 18;
+const playerFontSize = 18;
 const playerFontColor = '#778899'; // Grey Slate - http://www.color-hex.com/color/778899
+const disabledFontOpacity = 32; // 10% opacity https://stackoverflow.com/questions/15852122/hex-transparency-in-colors
 
 const styles = StyleSheet.create({
   headerText: {
@@ -143,9 +151,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   durationTextInput: {
-    width: 5,
-    backgroundColor: 'rgba(52,52,52,0)', // this isn't working, and neither is 'transparent'
-    textAlign: 'center',
+    width: 10,
+    height: 10,
+    //backgroundColor: 'rgba(52,52,52,0)', // this isn't working, and neither is 'transparent'
+    //textAlign: 'center',
   },
   playerDisplayContainer: {
     flexDirection: 'row',
@@ -178,6 +187,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: playerFontColor,
     marginHorizontal: 10,
+    marginBottom: 30,
     padding: 5,
   },
   removePlayerButton: {
@@ -188,6 +198,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingVertical: 10,
     borderColor: playerFontColor,
+  },
+  disabledButton: {
+    backgroundColor: `${playerFontColor}${disabledFontOpacity}`,
+    borderWidth: 0,
   },
 });
 
